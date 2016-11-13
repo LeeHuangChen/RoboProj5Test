@@ -53,11 +53,20 @@ def isStateValid(state):
     # Some arbitrary condition on the state (note that thanks to
     # dynamic type checking we can just call getX() and do not need
     # to convert state to an SE2State.)
-    return state.value < .6
+    #return state[0].value < .6 or state[1].value <.6
+    return True
 
 def planWithSimpleSetup():
     # create an So2 state space
-    space = ob.SO2StateSpace()
+    n=5
+    
+    s1=ob.SO2StateSpace()
+    s2=ob.SO2StateSpace()
+
+    space = ob.CompoundStateSpace()
+    space.addSubspace(ob.SO2StateSpace(),1)
+    space.addSubspace(ob.SO2StateSpace(),1)
+    #space = s2 + s1
 
     # set lower and upper bounds
     # bounds = ob.RealVectorBounds(2)
@@ -71,18 +80,21 @@ def planWithSimpleSetup():
 
     start = ob.State(space)
     # we can pick a random start state...
-    start.random()
+    #start.random()
     # ... or set specific values
-    space.value=.5
+    start[0]=.5
+    start[1]=.5
     #start().setX(.5)
 
     goal = ob.State(space)
     # we can pick a random goal state...
-    goal.random()
+    #goal.random()
     # ... or set specific values
     #goal().setX(-.5)
-    goal.value=-.5
+    goal[0]=.3
+    goal[1]=.3
 
+    
     ss.setStartAndGoalStates(start, goal)
 
     # this will automatically choose a default planner with
@@ -94,6 +106,7 @@ def planWithSimpleSetup():
         ss.simplifySolution()
         # print the simplified path
         print(ss.getSolutionPath())
+        
 
 
 
